@@ -1,5 +1,5 @@
 // ============================================
-// APP PRINCIPAL — Cefemex Premium Redesign
+// APP PRINCIPAL — Cefemex Apple Pay Style
 // ============================================
 
 const App = {
@@ -38,33 +38,34 @@ const App = {
     });
   },
 
-  // ---- STEP INDICATOR ----
-  updateStepIndicator(step) {
-    const circles = document.querySelectorAll('.step-circle');
-    const labels = document.querySelectorAll('.step-label');
-    const connectors = document.querySelectorAll('.step-connector');
-
-    circles.forEach((circle, i) => {
-      circle.classList.remove('active', 'completed');
-      if (i < step) {
-        circle.classList.add('completed');
-        circle.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      } else {
-        circle.innerHTML = String(i + 1);
-      }
-      if (i === step) circle.classList.add('active');
-    });
-    labels.forEach((label, i) => {
-      label.classList.remove('active', 'completed');
-      if (i < step) label.classList.add('completed');
-      if (i === step) label.classList.add('active');
-    });
-    connectors.forEach((conn, i) => {
-      conn.classList.toggle('active', i < step);
+  // ---- STEP DOTS ----
+  updateStepDots(step) {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      dot.classList.remove('active', 'completed');
+      if (i < step) dot.classList.add('completed');
+      if (i === step) dot.classList.add('active');
     });
   },
 
-  // ---- STEP 0: CATEGORY GRID ----
+  // Category icon map (iOS Settings style)
+  categoryIcons: {
+    1:  { emoji: '💍', bg: '#FFD60A' },  // Oro y Joyas
+    4:  { emoji: '📱', bg: '#34C759' },  // Celulares
+    9:  { emoji: '🚗', bg: '#007AFF' },  // Autos
+    3:  { emoji: '⌚', bg: '#FF9F0A' },  // Relojes
+    17: { emoji: '🔌', bg: '#AF52DE' },  // Electrónicos
+    11: { emoji: '💻', bg: '#5856D6' },  // Laptops
+    7:  { emoji: '🏍️', bg: '#FF3B30' }, // Motos
+    10: { emoji: '📺', bg: '#30B0C7' },  // Pantallas
+    12: { emoji: '🎮', bg: '#FF2D55' },  // Videojuegos
+    5:  { emoji: '📋', bg: '#30D158' },  // Tablets
+    15: { emoji: '⌚', bg: '#5AC8FA' },  // Smartwatch
+    16: { emoji: '🖥️', bg: '#64D2FF' }, // Computadoras
+    99: { emoji: '📦', bg: '#8E8E93' },  // Otros
+  },
+
+  // ---- STEP 0: CATEGORY LIST ----
   renderCategories() {
     this.currentStep = 0;
     this.selectedCategory = null;
@@ -74,18 +75,22 @@ const App = {
     this.goldWeight = 5;
     this.loanResult = null;
 
-    this.updateStepIndicator(0);
+    this.updateStepDots(0);
     this.updateBreadcrumb([{ label: 'Categorías' }]);
 
     const heroText = document.getElementById('hero-text');
     if (heroText) heroText.style.display = 'block';
 
     const container = document.getElementById('step-content');
-    let html = '<div class="category-grid" id="category-grid">';
+    let html = '<div class="category-list">';
     CATALOGS.categories.forEach(cat => {
-      html += `<button class="category-card" data-id="${cat.id}" data-type="${cat.type}">
-        <img src="img/${cat.icon}.svg" alt="" class="card-icon" onerror="this.src='img/default.svg'">
-        <span class="card-label">${cat.name}</span>
+      const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
+      html += `<button class="category-row" data-id="${cat.id}" data-type="${cat.type}">
+        <div class="cat-icon" style="background:${icon.bg}">${icon.emoji}</div>
+        <div class="row-content">
+          <span class="row-label">${cat.name}</span>
+        </div>
+        <svg class="row-chevron" viewBox="0 0 20 20" fill="none"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>`;
     });
     html += '</div>';
@@ -93,14 +98,14 @@ const App = {
 
     document.getElementById('result-section').style.display = 'none';
 
-    container.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', () => {
-        card.classList.add('selected');
+    container.querySelectorAll('.category-row').forEach(row => {
+      row.addEventListener('click', () => {
+        row.classList.add('selected');
         setTimeout(() => {
-          const id = parseInt(card.dataset.id) || card.dataset.id;
-          const type = card.dataset.type;
+          const id = parseInt(row.dataset.id) || row.dataset.id;
+          const type = row.dataset.type;
           this.selectCategory(id, type);
-        }, 300);
+        }, 150);
       });
     });
   },
@@ -125,7 +130,7 @@ const App = {
   // ---- STEP 1: FORMS ----
   renderForm(cat) {
     this.currentStep = 1;
-    this.updateStepIndicator(1);
+    this.updateStepDots(1);
     this.updateBreadcrumb([
       { label: 'Categorías', action: () => this.renderCategories() },
       { label: cat.name }
@@ -146,13 +151,14 @@ const App = {
   },
 
   renderGoldForm(cat) {
+    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <img src="img/${cat.icon}.svg" alt="" class="badge-icon">
+        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
-        <label class="field-label">Selecciona Kilataje
+        <label class="field-label">Kilataje
           <button type="button" class="help-btn" id="help-kilataje">?</button>
         </label>
         <div class="segmented-control" id="kilataje-control">
@@ -168,17 +174,18 @@ const App = {
         <div class="range-limits"><span>0.5 g</span><span>100 g</span></div>
       </div>
       <div class="form-actions">
-        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Cambiar artículo</button>
+        <button class="btn-primary" id="btn-calculate">Calcular préstamo</button>
       </div>
     </div>`;
   },
 
   renderBrandModelForm(cat) {
+    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     const brands = CATALOGS.brands[cat.id] || [];
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <img src="img/${cat.icon}.svg" alt="" class="badge-icon">
+        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
@@ -195,16 +202,17 @@ const App = {
         </select>
       </div>
       <div class="form-actions">
-        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Cambiar artículo</button>
+        <button class="btn-primary" id="btn-calculate">Calcular préstamo</button>
       </div>
     </div>`;
   },
 
   renderElectronicosForm(cat) {
+    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <img src="img/${cat.icon}.svg" alt="" class="badge-icon">
+        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
@@ -230,8 +238,8 @@ const App = {
         <div class="range-limits"><span>$500</span><span>$50,000</span></div>
       </div>
       <div class="form-actions">
-        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Cambiar artículo</button>
+        <button class="btn-primary" id="btn-calculate">Calcular préstamo</button>
       </div>
     </div>`;
   },
@@ -259,7 +267,7 @@ const App = {
         this.goldWeight = val;
         rangeDisplay.textContent = `${val.toFixed(1)} g`;
         const pct = ((val - 0.5) / (100 - 0.5)) * 100;
-        rangeSlider.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--border-default) ${pct}%)`;
+        rangeSlider.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--separator-opaque) ${pct}%)`;
       };
       rangeSlider.addEventListener('input', updateSlider);
       updateSlider();
@@ -301,7 +309,7 @@ const App = {
         const val = parseFloat(rangeValor.value);
         inputValor.value = val;
         const pct = ((val - 500) / (50000 - 500)) * 100;
-        rangeValor.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--border-default) ${pct}%)`;
+        rangeValor.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--separator-opaque) ${pct}%)`;
       };
       rangeValor.addEventListener('input', updateValorSlider);
       inputValor.addEventListener('input', () => {
@@ -372,7 +380,7 @@ const App = {
   // ---- STEP 2: RESULTS ----
   renderResult(result) {
     this.currentStep = 2;
-    this.updateStepIndicator(2);
+    this.updateStepDots(2);
     this.updateBreadcrumb([
       { label: 'Categorías', action: () => this.renderCategories() },
       { label: this.selectedCategory.name, action: () => this.renderForm(this.selectedCategory) },
@@ -385,8 +393,8 @@ const App = {
     const resultSection = document.getElementById('result-section');
     resultSection.style.display = 'block';
 
-    // Ring gauge
-    const circumference = 2 * Math.PI * 70;
+    // Ring gauge — thinner, more refined
+    const circumference = 2 * Math.PI * 72;
     const loanDisplay = document.getElementById('loan-display');
     loanDisplay.innerHTML = `<div class="loan-display-inner">
       <div class="ring-container">
@@ -397,8 +405,8 @@ const App = {
               <stop offset="100%" stop-color="#C9A84C"/>
             </linearGradient>
           </defs>
-          <circle cx="80" cy="80" r="70" fill="none" stroke="#E8E6E1" stroke-width="6"/>
-          <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="6"
+          <circle cx="80" cy="80" r="72" fill="none" stroke="#E5E5EA" stroke-width="4"/>
+          <circle cx="80" cy="80" r="72" fill="none" stroke="url(#ringGrad)" stroke-width="4"
             stroke-linecap="round" class="ring-progress"
             stroke-dasharray="${circumference}"
             stroke-dashoffset="${circumference}"
@@ -410,7 +418,7 @@ const App = {
         </div>
       </div>
       <div class="article-badge">
-        <img src="img/${this.selectedCategory.icon}.svg" alt="" class="badge-icon">
+        <span class="badge-emoji">${(this.categoryIcons[this.selectedCategory.id] || {emoji:'📦'}).emoji}</span>
         <span>${this.selectedCategory.name}</span>
       </div>
     </div>`;
@@ -453,7 +461,7 @@ const App = {
 
     const container = document.getElementById('plans-comparison');
     container.innerHTML = `
-      <h3 class="plans-heading">Elige tu plan de pago</h3>
+      <h3 class="plans-heading">Planes de pago</h3>
       <div class="plans-grid">
         ${this.renderPlanCard('tradicional', tradPlan)}
         ${this.renderPlanCard('fijo', fijoPlan)}
@@ -582,7 +590,7 @@ const App = {
     const modal = document.getElementById('modal');
     modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
-      <h3>¡Aviso!</h3>
+      <h3>Aviso</h3>
       <p style="text-align:center">${message}</p>
       <div class="modal-actions">
         <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
@@ -657,7 +665,7 @@ const App = {
         ${itemsList.map(r => `<li>${r}</li>`).join('')}
       </ul>
       <div class="modal-actions">
-        <button class="btn-primary" id="btn-continue-req">Calcula tu préstamo</button>
+        <button class="btn-primary" id="btn-continue-req">Continuar</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
@@ -671,7 +679,7 @@ const App = {
     const modal = document.getElementById('modal');
     modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
-      <h3>¡Importante!</h3>
+      <h3>Importante</h3>
       <p>El monto mostrado es una estimación. El valor final del préstamo puede variar dependiendo de:</p>
       <ul>
         <li><strong>Estado físico</strong> del artículo</li>
@@ -706,7 +714,7 @@ const App = {
     const modal = document.getElementById('modal');
     modal.innerHTML = `<div class="modal-card modal-wide">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
-      <h3>Identificar el Kilataje de Oro</h3>
+      <h3>Identificar el Kilataje</h3>
       <p>El kilataje indica la pureza del oro. Busca la marca grabada en tu joya.</p>
       <div class="table-wrapper">
         <table class="info-table">
