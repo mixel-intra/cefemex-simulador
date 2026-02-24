@@ -48,24 +48,24 @@ const App = {
     });
   },
 
-  // Category icon map (iOS Settings style)
+  // Thin-line SVG icons for categories (professional/fintech style)
   categoryIcons: {
-    1:  { emoji: '💍', bg: '#FFD60A' },  // Oro y Joyas
-    4:  { emoji: '📱', bg: '#34C759' },  // Celulares
-    9:  { emoji: '🚗', bg: '#007AFF' },  // Autos
-    3:  { emoji: '⌚', bg: '#FF9F0A' },  // Relojes
-    17: { emoji: '🔌', bg: '#AF52DE' },  // Electrónicos
-    11: { emoji: '💻', bg: '#5856D6' },  // Laptops
-    7:  { emoji: '🏍️', bg: '#FF3B30' }, // Motos
-    10: { emoji: '📺', bg: '#30B0C7' },  // Pantallas
-    12: { emoji: '🎮', bg: '#FF2D55' },  // Videojuegos
-    5:  { emoji: '📋', bg: '#30D158' },  // Tablets
-    15: { emoji: '⌚', bg: '#5AC8FA' },  // Smartwatch
-    16: { emoji: '🖥️', bg: '#64D2FF' }, // Computadoras
-    99: { emoji: '📦', bg: '#8E8E93' },  // Otros
+    1:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l4 8 8 1.5-6 5.5 1.5 8L16 22l-7.5 4 1.5-8-6-5.5 8-1.5z"/></svg>`,
+    4:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="4" width="14" height="24" rx="3"/><line x1="14" y1="25" x2="18" y2="25"/></svg>`,
+    9:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18h22v3a3 3 0 01-3 3H8a3 3 0 01-3-3v-3z"/><path d="M7 18v-4a2 2 0 012-2h2l1.5-3h7L21 12h2a2 2 0 012 2v4"/><circle cx="10" cy="24" r="1.5"/><circle cx="22" cy="24" r="1.5"/></svg>`,
+    3:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><line x1="16" y1="9" x2="16" y2="16"/><line x1="16" y1="16" x2="21" y2="19"/><circle cx="16" cy="16" r="1.5"/></svg>`,
+    17: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M20 14h8v8a2 2 0 01-2 2h-4a2 2 0 01-2-2v-8z"/><line x1="8" y1="24" x2="16" y2="24"/></svg>`,
+    11: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a2 2 0 012-2h18a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V8z"/><line x1="10" y1="28" x2="22" y2="28"/><line x1="16" y1="24" x2="16" y2="28"/></svg>`,
+    7:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="22" r="4"/><circle cx="25" cy="22" r="3"/><path d="M12 22h6l3-7h-8l-2-5H6"/><line x1="18" y1="15" x2="25" y2="22"/></svg>`,
+    10: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="24" height="16" rx="2"/><line x1="12" y1="26" x2="20" y2="26"/><line x1="16" y1="22" x2="16" y2="26"/></svg>`,
+    12: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="20" height="16" rx="4"/><circle cx="12" cy="18" r="2"/><circle cx="20" cy="14" r="2"/><line x1="17" y1="18" x2="19" y2="18"/><line x1="13" y1="14" x2="15" y2="14"/></svg>`,
+    5:  `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="18" height="24" rx="3"/><line x1="13" y1="25" x2="19" y2="25"/></svg>`,
+    15: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="14" height="18" rx="4"/><line x1="9" y1="10" x2="23" y2="10"/><path d="M14 28h4"/><line x1="16" y1="24" x2="16" y2="28"/></svg>`,
+    16: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="16" height="14" rx="2"/><rect x="6" y="20" width="20" height="8" rx="2"/><line x1="16" y1="18" x2="16" y2="20"/><circle cx="16" cy="24" r="1"/></svg>`,
+    99: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3"/><circle cx="22" cy="10" r="3"/><circle cx="10" cy="22" r="3"/><circle cx="22" cy="22" r="3"/></svg>`,
   },
 
-  // ---- STEP 0: CATEGORY LIST ----
+  // ---- STEP 0: CATEGORY GRID ----
   renderCategories() {
     this.currentStep = 0;
     this.selectedCategory = null;
@@ -82,15 +82,12 @@ const App = {
     if (heroText) heroText.style.display = 'block';
 
     const container = document.getElementById('step-content');
-    let html = '<div class="category-list">';
+    let html = '<div class="category-grid">';
     CATALOGS.categories.forEach(cat => {
-      const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
-      html += `<button class="category-row" data-id="${cat.id}" data-type="${cat.type}">
-        <div class="cat-icon" style="background:${icon.bg}">${icon.emoji}</div>
-        <div class="row-content">
-          <span class="row-label">${cat.name}</span>
-        </div>
-        <svg class="row-chevron" viewBox="0 0 20 20" fill="none"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      const icon = this.categoryIcons[cat.id] || this.categoryIcons[99];
+      html += `<button class="category-card" data-id="${cat.id}" data-type="${cat.type}">
+        <div class="cat-icon-wrap">${icon}</div>
+        <span class="cat-name">${cat.name}</span>
       </button>`;
     });
     html += '</div>';
@@ -98,12 +95,12 @@ const App = {
 
     document.getElementById('result-section').style.display = 'none';
 
-    container.querySelectorAll('.category-row').forEach(row => {
-      row.addEventListener('click', () => {
-        row.classList.add('selected');
+    container.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.add('selected');
         setTimeout(() => {
-          const id = parseInt(row.dataset.id) || row.dataset.id;
-          const type = row.dataset.type;
+          const id = parseInt(card.dataset.id) || card.dataset.id;
+          const type = card.dataset.type;
           this.selectCategory(id, type);
         }, 150);
       });
@@ -151,10 +148,8 @@ const App = {
   },
 
   renderGoldForm(cat) {
-    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
@@ -181,11 +176,9 @@ const App = {
   },
 
   renderBrandModelForm(cat) {
-    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     const brands = CATALOGS.brands[cat.id] || [];
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
@@ -209,10 +202,8 @@ const App = {
   },
 
   renderElectronicosForm(cat) {
-    const icon = this.categoryIcons[cat.id] || { emoji: '📦', bg: '#8E8E93' };
     return `<div class="form-panel">
       <div class="selected-article-badge">
-        <span class="badge-emoji">${icon.emoji}</span>
         <span>${cat.name}</span>
       </div>
       <div class="form-field">
@@ -418,7 +409,6 @@ const App = {
         </div>
       </div>
       <div class="article-badge">
-        <span class="badge-emoji">${(this.categoryIcons[this.selectedCategory.id] || {emoji:'📦'}).emoji}</span>
         <span>${this.selectedCategory.name}</span>
       </div>
     </div>`;
