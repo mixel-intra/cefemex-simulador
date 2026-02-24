@@ -1,5 +1,5 @@
 // ============================================
-// APP PRINCIPAL — Glassmorphism Claro Redesign
+// APP PRINCIPAL — Cefemex Premium Redesign
 // ============================================
 
 const App = {
@@ -38,19 +38,33 @@ const App = {
     });
   },
 
-  // ---- PROGRESS ORBS ----
-  updateProgressOrbs(step) {
-    document.querySelectorAll('.orb').forEach((orb, i) => {
-      orb.classList.remove('active', 'completed');
-      if (i < step) orb.classList.add('completed');
-      if (i === step) orb.classList.add('active');
+  // ---- STEP INDICATOR ----
+  updateStepIndicator(step) {
+    const circles = document.querySelectorAll('.step-circle');
+    const labels = document.querySelectorAll('.step-label');
+    const connectors = document.querySelectorAll('.step-connector');
+
+    circles.forEach((circle, i) => {
+      circle.classList.remove('active', 'completed');
+      if (i < step) {
+        circle.classList.add('completed');
+        circle.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      } else {
+        circle.innerHTML = String(i + 1);
+      }
+      if (i === step) circle.classList.add('active');
     });
-    document.querySelectorAll('.orb-connector').forEach((conn, i) => {
+    labels.forEach((label, i) => {
+      label.classList.remove('active', 'completed');
+      if (i < step) label.classList.add('completed');
+      if (i === step) label.classList.add('active');
+    });
+    connectors.forEach((conn, i) => {
       conn.classList.toggle('active', i < step);
     });
   },
 
-  // ---- STEP 0: CATEGORY CHIPS ----
+  // ---- STEP 0: CATEGORY GRID ----
   renderCategories() {
     this.currentStep = 0;
     this.selectedCategory = null;
@@ -60,18 +74,18 @@ const App = {
     this.goldWeight = 5;
     this.loanResult = null;
 
-    this.updateProgressOrbs(0);
+    this.updateStepIndicator(0);
     this.updateBreadcrumb([{ label: 'Categorías' }]);
 
     const heroText = document.getElementById('hero-text');
     if (heroText) heroText.style.display = 'block';
 
     const container = document.getElementById('step-content');
-    let html = '<div class="category-chips" id="category-chips">';
+    let html = '<div class="category-grid" id="category-grid">';
     CATALOGS.categories.forEach(cat => {
-      html += `<button class="category-chip" data-id="${cat.id}" data-type="${cat.type}">
-        <img src="img/${cat.icon}.svg" alt="" class="chip-icon" onerror="this.src='img/default.svg'">
-        <span>${cat.name}</span>
+      html += `<button class="category-card" data-id="${cat.id}" data-type="${cat.type}">
+        <img src="img/${cat.icon}.svg" alt="" class="card-icon" onerror="this.src='img/default.svg'">
+        <span class="card-label">${cat.name}</span>
       </button>`;
     });
     html += '</div>';
@@ -79,17 +93,14 @@ const App = {
 
     document.getElementById('result-section').style.display = 'none';
 
-    container.querySelectorAll('.category-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const chipsContainer = document.getElementById('category-chips');
-        chipsContainer.classList.add('has-selection');
-        chip.classList.add('selected');
-
+    container.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.add('selected');
         setTimeout(() => {
-          const id = parseInt(chip.dataset.id) || chip.dataset.id;
-          const type = chip.dataset.type;
+          const id = parseInt(card.dataset.id) || card.dataset.id;
+          const type = card.dataset.type;
           this.selectCategory(id, type);
-        }, 450);
+        }, 300);
       });
     });
   },
@@ -114,7 +125,7 @@ const App = {
   // ---- STEP 1: FORMS ----
   renderForm(cat) {
     this.currentStep = 1;
-    this.updateProgressOrbs(1);
+    this.updateStepIndicator(1);
     this.updateBreadcrumb([
       { label: 'Categorías', action: () => this.renderCategories() },
       { label: cat.name }
@@ -144,8 +155,8 @@ const App = {
         <label class="field-label">Selecciona Kilataje
           <button type="button" class="help-btn" id="help-kilataje">?</button>
         </label>
-        <div class="kilataje-chips" id="kilataje-chips">
-          ${CATALOGS.kilatajes.map(k => `<button type="button" class="kil-chip" data-value="${k.value}">${k.text}</button>`).join('')}
+        <div class="segmented-control" id="kilataje-control">
+          ${CATALOGS.kilatajes.map(k => `<button type="button" class="segment-btn" data-value="${k.value}">${k.text}</button>`).join('')}
         </div>
       </div>
       <div class="form-field">
@@ -157,8 +168,8 @@ const App = {
         <div class="range-limits"><span>0.5 g</span><span>100 g</span></div>
       </div>
       <div class="form-actions">
-        <button class="btn-glass-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-glass-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
+        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
       </div>
     </div>`;
   },
@@ -172,20 +183,20 @@ const App = {
       </div>
       <div class="form-field">
         <label class="field-label">Marca</label>
-        <select id="select-marca" class="glass-select">
+        <select id="select-marca" class="form-select">
           <option value="">Selecciona una marca</option>
           ${brands.map(b => `<option value="${b.value}">${b.text}</option>`).join('')}
         </select>
       </div>
       <div class="form-field slide-field" id="modelo-group" style="display:none">
         <label class="field-label">Modelo</label>
-        <select id="select-modelo" class="glass-select">
+        <select id="select-modelo" class="form-select">
           <option value="">Selecciona un modelo</option>
         </select>
       </div>
       <div class="form-actions">
-        <button class="btn-glass-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-glass-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
+        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
       </div>
     </div>`;
   },
@@ -198,14 +209,14 @@ const App = {
       </div>
       <div class="form-field">
         <label class="field-label">Artículo</label>
-        <select id="select-garantia" class="glass-select">
+        <select id="select-garantia" class="form-select">
           <option value="">Seleccione un artículo</option>
           ${CATALOGS.electronicosItems.map((item, i) => `<option value="${i}">${item}</option>`).join('')}
         </select>
       </div>
       <div class="form-field slide-field" id="marca-elec-group" style="display:none">
         <label class="field-label">Marca</label>
-        <select id="select-marca-elec" class="glass-select">
+        <select id="select-marca-elec" class="form-select">
           <option value="">Selecciona una marca</option>
           ${CATALOGS.electronicosBrands.map((b, i) => `<option value="${i}">${b}</option>`).join('')}
         </select>
@@ -214,35 +225,32 @@ const App = {
         <label class="field-label">Valor aproximado</label>
         <div class="value-input-combo">
           <input type="range" id="range-valor" class="range-slider" min="500" max="50000" step="500" value="5000">
-          <input type="number" id="input-valor" class="glass-input" placeholder="$5,000" min="100" value="5000">
+          <input type="number" id="input-valor" class="form-input" placeholder="$5,000" min="100" value="5000">
         </div>
         <div class="range-limits"><span>$500</span><span>$50,000</span></div>
       </div>
       <div class="form-actions">
-        <button class="btn-glass-secondary" id="btn-other-article">Simular otro artículo</button>
-        <button class="btn-glass-primary" id="btn-calculate">Quiero mi préstamo</button>
+        <button class="btn-secondary" id="btn-other-article">Simular otro artículo</button>
+        <button class="btn-primary" id="btn-calculate">Quiero mi préstamo</button>
       </div>
     </div>`;
   },
 
   bindFormEvents(cat) {
-    // Back to categories
     document.getElementById('btn-other-article')?.addEventListener('click', () => this.renderCategories());
-    // Calculate
     document.getElementById('btn-calculate')?.addEventListener('click', () => this.calculate(cat));
-    // Help kilataje
     document.getElementById('help-kilataje')?.addEventListener('click', () => this.showKilatajeHelp());
 
-    // ---- Gold: kilataje chips ----
-    document.querySelectorAll('.kil-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.kil-chip').forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-        this.selectedKilataje = chip.dataset.value;
+    // Segmented control (kilataje)
+    document.querySelectorAll('.segment-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        this.selectedKilataje = btn.dataset.value;
       });
     });
 
-    // ---- Gold: range slider ----
+    // Range slider
     const rangeSlider = document.getElementById('range-gramos');
     const rangeDisplay = document.getElementById('range-value-display');
     if (rangeSlider && rangeDisplay) {
@@ -251,13 +259,13 @@ const App = {
         this.goldWeight = val;
         rangeDisplay.textContent = `${val.toFixed(1)} g`;
         const pct = ((val - 0.5) / (100 - 0.5)) * 100;
-        rangeSlider.style.background = `linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) ${pct}%, rgba(255,255,255,0.35) ${pct}%)`;
+        rangeSlider.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--border-default) ${pct}%)`;
       };
       rangeSlider.addEventListener('input', updateSlider);
       updateSlider();
     }
 
-    // ---- Brand/Model: brand select ----
+    // Brand/Model select
     document.getElementById('select-marca')?.addEventListener('change', (e) => {
       const brand = e.target.value;
       this.selectedBrand = brand;
@@ -271,7 +279,7 @@ const App = {
       }
     });
 
-    // ---- Electronics: article ----
+    // Electronics: article
     document.getElementById('select-garantia')?.addEventListener('change', (e) => {
       const marcaGroup = document.getElementById('marca-elec-group');
       if (marcaGroup) marcaGroup.style.display = e.target.value ? 'block' : 'none';
@@ -279,13 +287,13 @@ const App = {
       if (valorGroup) valorGroup.style.display = 'none';
     });
 
-    // ---- Electronics: brand ----
+    // Electronics: brand
     document.getElementById('select-marca-elec')?.addEventListener('change', (e) => {
       const valorGroup = document.getElementById('valor-elec-group');
       if (valorGroup) valorGroup.style.display = e.target.value ? 'block' : 'none';
     });
 
-    // ---- Electronics: range + input sync ----
+    // Electronics: range + input sync
     const rangeValor = document.getElementById('range-valor');
     const inputValor = document.getElementById('input-valor');
     if (rangeValor && inputValor) {
@@ -293,7 +301,7 @@ const App = {
         const val = parseFloat(rangeValor.value);
         inputValor.value = val;
         const pct = ((val - 500) / (50000 - 500)) * 100;
-        rangeValor.style.background = `linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) ${pct}%, rgba(255,255,255,0.35) ${pct}%)`;
+        rangeValor.style.background = `linear-gradient(90deg, var(--navy) 0%, var(--gold) ${pct}%, var(--border-default) ${pct}%)`;
       };
       rangeValor.addEventListener('input', updateValorSlider);
       inputValor.addEventListener('input', () => {
@@ -364,7 +372,7 @@ const App = {
   // ---- STEP 2: RESULTS ----
   renderResult(result) {
     this.currentStep = 2;
-    this.updateProgressOrbs(2);
+    this.updateStepIndicator(2);
     this.updateBreadcrumb([
       { label: 'Categorías', action: () => this.renderCategories() },
       { label: this.selectedCategory.name, action: () => this.renderForm(this.selectedCategory) },
@@ -382,15 +390,15 @@ const App = {
     const loanDisplay = document.getElementById('loan-display');
     loanDisplay.innerHTML = `<div class="loan-display-inner">
       <div class="ring-container">
-        <svg class="ring-gauge" viewBox="0 0 160 160" width="220" height="220">
+        <svg class="ring-gauge" viewBox="0 0 160 160" width="200" height="200">
           <defs>
             <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#1B2A4A"/>
               <stop offset="100%" stop-color="#C9A84C"/>
             </linearGradient>
           </defs>
-          <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="8"/>
-          <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="8"
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#E8E6E1" stroke-width="6"/>
+          <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="6"
             stroke-linecap="round" class="ring-progress"
             stroke-dasharray="${circumference}"
             stroke-dashoffset="${circumference}"
@@ -401,13 +409,13 @@ const App = {
           <span class="loan-counter" id="loan-counter">$0</span>
         </div>
       </div>
-      <div class="loan-article-badge">
+      <div class="article-badge">
         <img src="img/${this.selectedCategory.icon}.svg" alt="" class="badge-icon">
         <span>${this.selectedCategory.name}</span>
       </div>
     </div>`;
 
-    // Animate ring — minimum 18% fill so small amounts don't look empty
+    // Animate ring
     const maxAmount = Math.max(result.prestamo * 2, 8000);
     const pct = Math.max(Math.min(result.prestamo / maxAmount, 1), 0.18);
     const offset = circumference * (1 - pct);
@@ -438,7 +446,7 @@ const App = {
     requestAnimationFrame(update);
   },
 
-  // ---- PAYMENT PLANS (side-by-side) ----
+  // ---- PAYMENT PLANS ----
   renderPaymentPlans(result) {
     const tradPlan = Calculator.calculateTradicional(result.prestamo, result.categoryId, 'mensual');
     const fijoPlan = Calculator.calculateFijo(result.prestamo, result.categoryId, 'mensual');
@@ -452,8 +460,8 @@ const App = {
       </div>
       <div class="result-actions">
         <div class="form-actions">
-          <button class="btn-glass-secondary" id="btn-new-sim">Simular otro artículo</button>
-          <button class="btn-glass-primary" id="btn-want-loan">Quiero mi préstamo</button>
+          <button class="btn-secondary" id="btn-new-sim">Simular otro artículo</button>
+          <button class="btn-gold" id="btn-want-loan">Quiero mi préstamo</button>
         </div>
       </div>`;
 
@@ -465,8 +473,8 @@ const App = {
     const label = type === 'tradicional' ? 'Tradicional' : 'Pagos Fijos';
     const freqs = CATALOGS.paymentFrequencies[type];
 
-    const rows = plan.payments.map((p, i) =>
-      `<tr style="animation-delay:${i * 0.04}s">
+    const rows = plan.payments.map(p =>
+      `<tr>
         <td>${p.numero}</td><td>${p.amortizacion}</td><td>${p.interes}</td><td>${p.refrendo}</td><td>${p.desempeno}</td>
       </tr>`
     ).join('');
@@ -488,7 +496,7 @@ const App = {
       </div>
       <div class="plan-frequency-select">
         <label>Frecuencia</label>
-        <select class="glass-select freq-select" data-plan-type="${type}">
+        <select class="form-select freq-select" data-plan-type="${type}">
           ${freqs.map(f => `<option value="${f.value}" ${f.value === 'mensual' ? 'selected' : ''}>${f.text}</option>`).join('')}
         </select>
       </div>
@@ -497,7 +505,7 @@ const App = {
         <svg class="toggle-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="payment-table-wrapper" id="table-${type}">
-        <table class="glass-table">
+        <table class="payment-table">
           <thead>
             <tr><th>Nº</th><th>Amort.</th><th>Interés</th><th>Refrendo</th><th>Desempeño</th></tr>
           </thead>
@@ -521,12 +529,6 @@ const App = {
         if (!isOpen) {
           wrapper.classList.add('open');
           btn.classList.add('active');
-          // Re-trigger row animations
-          wrapper.querySelectorAll('tbody tr').forEach(row => {
-            row.style.animation = 'none';
-            row.offsetHeight; // force reflow
-            row.style.animation = '';
-          });
         }
       });
     });
@@ -558,20 +560,17 @@ const App = {
     const card = document.querySelector(`.plan-card[data-plan="${type}"]`);
     if (!card) return;
 
-    // Update metrics
     const metrics = card.querySelectorAll('.metric-value');
     if (metrics[0]) metrics[0].textContent = formatCurrency(plan.refrendo);
     if (metrics[1]) metrics[1].textContent = formatCurrency(plan.ultimoPago);
 
-    // Update badge
     const badge = card.querySelector('.plan-badge');
     if (badge && plan.plazo) badge.textContent = plan.plazo;
 
-    // Update table
-    const tbody = card.querySelector('.glass-table tbody');
+    const tbody = card.querySelector('.payment-table tbody');
     if (tbody) {
-      tbody.innerHTML = plan.payments.map((p, i) =>
-        `<tr style="animation-delay:${i * 0.04}s">
+      tbody.innerHTML = plan.payments.map(p =>
+        `<tr>
           <td>${p.numero}</td><td>${p.amortizacion}</td><td>${p.interes}</td><td>${p.refrendo}</td><td>${p.desempeno}</td>
         </tr>`
       ).join('');
@@ -581,12 +580,12 @@ const App = {
   // ---- MODALS ----
   showAlert(message) {
     const modal = document.getElementById('modal');
-    modal.innerHTML = `<div class="modal-glass">
+    modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       <h3>¡Aviso!</h3>
       <p style="text-align:center">${message}</p>
       <div class="modal-actions">
-        <button class="btn-glass-primary" onclick="App.closeModal()">Entendido</button>
+        <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
@@ -601,7 +600,7 @@ const App = {
         <p>Selecciona el tipo de empeño que necesitas:</p>
         <div class="auto-options">
           <div class="auto-option">
-            <h4>🚗 Auto Rodando</h4>
+            <h4>Auto Rodando</h4>
             <ul>
               <li>Sigues usando tu auto</li>
               <li>Máximo 12 años de antigüedad</li>
@@ -609,7 +608,7 @@ const App = {
             </ul>
           </div>
           <div class="auto-option">
-            <h4>🏠 Auto Resguardo</h4>
+            <h4>Auto Resguardo</h4>
             <ul>
               <li>El auto queda en resguardo</li>
               <li>Mayor porcentaje de préstamo</li>
@@ -619,7 +618,7 @@ const App = {
         </div>
         <p class="modal-note">Para cotizar tu auto, acude a la sucursal más cercana.</p>
         <div class="modal-actions">
-          <button class="btn-glass-primary" onclick="App.closeModal()">Entendido</button>
+          <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
         </div>`;
     } else if (cat.id === 3) { // Relojes
       content = `<h3>Empeño de Relojes</h3>
@@ -630,15 +629,15 @@ const App = {
             Contactar por WhatsApp
           </a>
         </div>`;
-    } else { // Otros
+    } else {
       content = `<h3>Otros Artículos</h3>
         <p>Para cotizar artículos no listados, acude a tu sucursal más cercana o contáctanos.</p>
         <div class="modal-actions">
-          <button class="btn-glass-primary" onclick="App.closeModal()">Entendido</button>
+          <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
         </div>`;
     }
 
-    modal.innerHTML = `<div class="modal-glass">
+    modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       ${content}
     </div>`;
@@ -650,7 +649,7 @@ const App = {
     const items = reqData.items || reqData || [];
     const itemsList = Array.isArray(items) ? items : [];
     const modal = document.getElementById('modal');
-    modal.innerHTML = `<div class="modal-glass">
+    modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       <h3>Requisitos para ${cat.name}</h3>
       <p>${reqData.title || 'Tu artículo debe cumplir con los siguientes requisitos:'}</p>
@@ -658,7 +657,7 @@ const App = {
         ${itemsList.map(r => `<li>${r}</li>`).join('')}
       </ul>
       <div class="modal-actions">
-        <button class="btn-glass-primary" id="btn-continue-req">Calcula tu préstamo</button>
+        <button class="btn-primary" id="btn-continue-req">Calcula tu préstamo</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
@@ -670,7 +669,7 @@ const App = {
 
   showLoanRequestDialog() {
     const modal = document.getElementById('modal');
-    modal.innerHTML = `<div class="modal-glass">
+    modal.innerHTML = `<div class="modal-card">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       <h3>¡Importante!</h3>
       <p>El monto mostrado es una estimación. El valor final del préstamo puede variar dependiendo de:</p>
@@ -681,16 +680,15 @@ const App = {
       </ul>
       <p class="modal-note">Acude a tu sucursal más cercana para completar tu empeño.</p>
       <div class="modal-actions">
-        <button class="btn-glass-primary" onclick="App.closeModal()">Entendido</button>
+        <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
   },
 
   showConditionsDialog() {
-    const cat = CATALOGS.catRates || {};
     const modal = document.getElementById('modal');
-    modal.innerHTML = `<div class="modal-glass modal-wide">
+    modal.innerHTML = `<div class="modal-card modal-wide">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       <h3>Condiciones del Simulador</h3>
       <p>La información proporcionada en este simulador: (i) es para fines ilustrativos, (ii) está sujeta a cambios sin previo aviso, (iii) no constituye una oferta vinculante, y (iv) no genera obligación alguna para Cefemex.</p>
@@ -698,7 +696,7 @@ const App = {
       <p>Fecha de cálculo del CAT: 05 de julio de 2023. Fin de vigencia: 4 de enero de 2024.</p>
       <p>Período mínimo de 61 días hasta un máximo de 24 meses (renovable).</p>
       <div class="modal-actions">
-        <button class="btn-glass-primary" onclick="App.closeModal()">Cerrar</button>
+        <button class="btn-primary" onclick="App.closeModal()">Cerrar</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
@@ -706,7 +704,7 @@ const App = {
 
   showKilatajeHelp() {
     const modal = document.getElementById('modal');
-    modal.innerHTML = `<div class="modal-glass modal-wide">
+    modal.innerHTML = `<div class="modal-card modal-wide">
       <button class="modal-close" onclick="App.closeModal()">&times;</button>
       <h3>Identificar el Kilataje de Oro</h3>
       <p>El kilataje indica la pureza del oro. Busca la marca grabada en tu joya.</p>
@@ -727,7 +725,7 @@ const App = {
       </div>
       <p><strong>¿Dónde buscar?</strong> En anillos: interior de la banda. En cadenas/pulseras: cerca del broche. En aretes: en el poste.</p>
       <div class="modal-actions">
-        <button class="btn-glass-primary" onclick="App.closeModal()">Entendido</button>
+        <button class="btn-primary" onclick="App.closeModal()">Entendido</button>
       </div>
     </div>`;
     modal.style.display = 'flex';
