@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cefemex - Simulador de Empeño</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Animated mesh gradient background -->
+  <div class="bg-mesh" aria-hidden="true">
+    <div class="bg-gradient bg-gradient-1"></div>
+    <div class="bg-gradient bg-gradient-2"></div>
+    <div class="bg-gradient bg-gradient-3"></div>
+    <div class="bg-gradient bg-gradient-4"></div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- Glass Header -->
+    <header class="glass-header">
+      <div class="header-inner">
+        <a href="/" class="brand">
+          <div class="brand-icon"><span>C</span></div>
+          <span class="brand-name"><strong>Cefemex</strong></span>
+        </a>
+        <nav class="breadcrumb" id="breadcrumb" aria-label="Navegación"></nav>
+      </div>
+    </header>
+
+    <!-- Progress Orbs -->
+    <div class="progress-orbs" id="progress-orbs">
+      <div class="orb active" data-step="0"></div>
+      <div class="orb-connector"></div>
+      <div class="orb" data-step="1"></div>
+      <div class="orb-connector"></div>
+      <div class="orb" data-step="2"></div>
+    </div>
+
+    <!-- Main Glass Panel -->
+    <main class="main-panel glass-panel" id="main-panel">
+      <div class="hero-text" id="hero-text">
+        <p class="hero-eyebrow">Simula Fácil</p>
+        <h1 class="hero-title gradient-text">Simulador de Empeño</h1>
+        <p class="hero-subtitle">Cotiza el préstamo de tus artículos en minutos.</p>
+      </div>
+
+      <div id="step-content"></div>
+
+      <div id="result-section" style="display:none">
+        <div id="loan-display"></div>
+        <div id="plans-comparison"></div>
+      </div>
+    </main>
+
+    <!-- Glass Footer -->
+    <footer class="glass-footer">
+      <p>La información proporcionada en este simulador es para fines ilustrativos, está sujeta a cambios y no genera obligación alguna para Cefemex.</p>
+      <a href="javascript:void(0)" id="link-conditions">Leer condiciones del simulador</a>
+    </footer>
+
+  </div>
+
+  <!-- Modal overlay -->
+  <div class="modal-overlay" id="modal"></div>
+
+  <script src="js/catalogs.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
